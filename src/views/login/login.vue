@@ -108,9 +108,27 @@ export default {
       // 校验整个表单的规则
       // validata是一个方法=>方法中传入的一个函数 两个校验参数是否校验成功/未校验成功的字段
 
-      this.$refs.myForm.validate(function (isOK) {
+      this.$refs.myForm.validate((isOK) => {
         if (isOK) {
-          console.log('校验成功,')
+          this.$message({
+            showClose: true,
+            message: '恭喜校验成功',
+            type: 'success'
+          })
+          this.$axios({
+            method: 'POST',
+            url: 'authorizations',
+            data: this.ruleForm
+          }).then(res => {
+            this.$router.push('/home')// 校验完毕登录去首页
+            window.localStorage.setItem('wmy-token', res.data.data.token)
+          }).catch(() => {
+            // 校验错误进入的判断
+            this.$message({
+              message: '手机号或者验证码错误',
+              type: 'warning'
+            })
+          })
         }
       })
     },

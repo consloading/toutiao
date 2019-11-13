@@ -7,7 +7,7 @@ import './assets/style/index.less'// 导入本地样式初始化
 import axios from 'axios'// 导入axios
 
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0/'// 设置接口基地址
-Vue.proyotype.$axios = axios // axios赋值给全局属性，使得全局可以访问的到
+Vue.prototype.$axios = axios // axios赋值给全局属性，使得全局可以访问的到
 Vue.use(ElementUI)// 使用elementui
 Vue.config.productionTip = false
 
