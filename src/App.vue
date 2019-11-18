@@ -1,5 +1,6 @@
 <template>
-  <router-view></router-view>
+      <!-- 整个项目的根组件 一级路由容器 -->
+      <router-view></router-view>
 </template>
 
 <script>
