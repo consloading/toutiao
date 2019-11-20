@@ -12,23 +12,29 @@
 
         <el-table-column prop="status" label="评论状态">
           <template slot-scope="scope">
-            <el-tag :type="commentStatus[scope.row.status].s">
-              {{commentStatus[scope.row.status].label}}
-            </el-tag>
+            <el-switch
+              v-model="scope.row.comment_status"
+              @change="onChangeStatus(scope.row)"
+              active-color="#13ce66"
+              inactive-color="#ff4949">
+            </el-switch>
           </template>
         </el-table-column>
         <el-table-column
-          prop="__ob__.vmCount"
+          prop="total_comment_count"
           label="总评论数">
         </el-table-column>
         <el-table-column
-          prop="__ob__.vmCount"
+          prop="fans_comment_count"
           label="粉丝评论数">
         </el-table-column>
         <el-table-column
           label="操作">
-          <el-button type="warning" icon="el-icon-edit" size="mini">修改<i></i></el-button>
-          <el-button type="danger" icon="el-icon-folder-delete" size="mini">关闭评论<i></i></el-button>
+        <template slot-scope="scope">
+          <el-button type="warning" icon="el-icon-edit" size="mini" @click="$router.push(`/home/commentedit/${scope.row.id}`)">修改<i></i></el-button>
+          <el-button type="danger" icon='el-icon-document-checked' size="mini" @click="onClickStatus(scope.row)">{{scope.row.comment_status?'关闭':'打开'}}评论<i></i>
+          </el-button>
+        </template>
         </el-table-column>
       </el-table>
         <el-pagination
@@ -49,12 +55,8 @@ export default {
     return {
       page: 0, // 记录当前分页器的页数
       total_count: 0, // 记录当前文章的总页数
-      commentStatus: [
-        { type: '0', label: '关闭', s: 'info' },
-        { val: '测试数据占位置用的' },
-        { type: '1', label: '正常', s: 'success' }
-      ],
-      newArr: []
+      newArr: [],
+      currentStatus: null // 文章当前的评论状态
     }
   },
   // 生命周期
@@ -69,16 +71,51 @@ export default {
         method: 'GET',
         url: '/articles',
         params: {
-          page
+          page,
+          response_type: 'comment'
         }
       }).then(res => {
+        // console.log(res)
+        console.log(res.data.data.results)
         // console.log(res.data.data.total_count)
         this.newArr = res.data.data.results
-        this.total_count = res.data.data.total_count
+        this.total_count = res.data.data.total_count // 总条数
         // console.log(this.newArr)
       }).catch(err => {
         console.log('获取数据失败', err)
       })
+    },
+    // 状态改变
+    onChangeStatus (key) {
+      // console.log(key)
+      this.currentStatus = key.comment_status
+      this.$axios({
+        method: 'PUT',
+        url: 'comments/status',
+        params: {
+          article_id: key.id.toString()
+        },
+        data: {
+          allow_comment: key.comment_status
+        }
+      }).then(res => {
+        console.log(res)
+        this.$message({
+          type: 'success',
+          message: `${key.comment_status ? '开启' : '关闭'}成功`
+        })
+      }).catch(err => {
+        console.log(err)
+        this.$message({
+          type: 'warning',
+          message: '修改失败，请稍后重试'
+        })
+      })
+    },
+    // 点击改变
+    onClickStatus (key) {
+      // console.log(key)
+      key.comment_status ? key.comment_status = false : key.comment_status = true
     },
     // 分页器改变
     onChangePage (page) {

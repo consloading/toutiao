@@ -14,7 +14,7 @@ axios.interceptors.request.use(function (config) {
   // 在请求拦截器函数中的 config 是本次请求相关的配置对象
   // config 就是最后要发给后端的那个配置对象
   // 我们可以在拦截器中对 config 进行统一配置定制
-  console.log('请求拦截器', config)
+  // console.log('请求拦截器', config)
   const token = window.localStorage.getItem('wmy-token')
   // 添加统一的token值  如果有token给请求头添加
   if (token) {

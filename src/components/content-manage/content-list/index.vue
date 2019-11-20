@@ -16,13 +16,16 @@
             <el-radio label="4">已删除</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="频道">
+        <!-- <el-form-item label="频道">
           <el-select placeholder="请选择"
            v-model="filterForm.channel_id"
              :value='null'>
             <el-option :label="item.name" :value="item.id" v-for= "item in channels" :key="item.id"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
+        <!-- 自己封装的频道 -->
+        <channe-select v-model="filterForm.channel_id"></channe-select>
+        <!-- /自己封装的频道 -->
         <el-form-item label="时间选择：">
           <div class="block">
             <el-date-picker
@@ -37,7 +40,7 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="GetData(1)">查询</el-button>
+          <el-button type="primary" @click="onQuery">查询</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -93,6 +96,7 @@
     <!-- 分页 -->
     <el-pagination
       :disabled="loading"
+      :current-page="page"
       background
       layout="prev, pager, next"
       @current-change="oncurrentChange"
@@ -103,7 +107,12 @@
 </template>
 
 <script>
+import channeSelect from '../../../views/channel/channel'
 export default {
+  // 局部组件
+  components: {
+    channeSelect
+  },
   name: 'contentList',
   data () {
     return {
@@ -112,7 +121,7 @@ export default {
         status: null, // 文章状态
         channel_id: null // 频道id
       },
-      Page: 0, // 当前页码
+      page: 0, // 当前页码
       totalCount: 0, // 记录总数据条数
       newArr: [], // 文章数据列表
       articleStatus: [
@@ -122,8 +131,8 @@ export default {
         { type: 'danger', label: '审核失败' }
       ],
       rangeDate: [], // 起止日期 ,获取到的是一个数组形式的数据
-      loading: true, // 为true开启
-      channels: [] // 用来存储频道列表
+      loading: true // 为true开启
+      // channels: [] // 用来存储频道列表
     }
   },
   // 生命周期
@@ -131,20 +140,20 @@ export default {
     // 初始化的时候默认加载第一页数据
     this.GetData(1)
     // 获取文章列表
-    this.GetChannelList()
+    // this.GetChannelList()
   },
   // 方法
   methods: {
-    // 获取频道列表
-    GetChannelList () {
-      this.$axios({
-        method: 'GET',
-        url: 'channels'
-      }).then(res => {
-        this.channels = res.data.data.channels
-        // console.log(this.channels) //获取到
-      })
-    },
+    // // 获取频道列表
+    // GetChannelList () {
+    //   this.$axios({
+    //     method: 'GET',
+    //     url: 'channels'
+    //   }).then(res => {
+    //     this.channels = res.data.data.channels
+    //     // console.log(this.channels) //获取到
+    //   })
+    // },
     // 获取数据
     GetData (page = 1) {
       this.loading = true
@@ -198,8 +207,15 @@ export default {
     },
     // 页码改变事件
     oncurrentChange (page) {
+      this.page = page
+      // console.log(this.page + 'data属性页')
       // console.log(page)// 获取当前页码数值
       this.GetData(page) // 将当前页面数以参数形式 传入调用数据
+    },
+    // 更新分页组件让第一页高亮
+    onQuery () {
+      this.GetData(1)
+      this.page = 1
     }
   }
 }

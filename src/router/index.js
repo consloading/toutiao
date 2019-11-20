@@ -26,6 +26,12 @@ const router = new VueRouter({
         // 内容管理下的
         // 评论列表
         { path: '/home/commentlist', component: () => import('../components/content-manage/comment-list/index.vue') },
+        // 评论列表修改界面
+        { path: '/home/commentedit/:id',
+          component: () => import('../components/content-manage/comment-list/commentEdit/commentEdit.vue'),
+          props: true // 将路由参数映射给组件的props数据，这样获取参数更方便一些
+        },
+
         // 内容列表
         { path: '/home/contentlist', component: () => import('../components/content-manage/content-list/index.vue') },
         // 素材管理
@@ -42,7 +48,9 @@ const router = new VueRouter({
         // 粉丝画像
         { path: '/home/fansportrayal', component: () => import('../components/fans-manage/fans-portrayal/index.vue') },
         // 粉丝列表
-        { path: '/home/fanslist', component: () => import('../components/fans-manage/fans-list/index.vue') }
+        { path: '/home/fanslist', component: () => import('../components/fans-manage/fans-list/index.vue') },
+        // 测试组价
+        { path: '/demo', component: () => import('../views/demo/index.vue') }
       ]
     }
 
@@ -61,7 +69,7 @@ VueRouter.prototype.push = function push (location) {
 router.beforeEach((to, from, next) => {
   // 开启顶部导航进度条效果
   NProgress.start()// 开始
-  console.log('所有页面的访问都需要通过这里')
+  // console.log('所有页面的访问都需要通过这里')
   if (to.path === '/login') {
     // 如果要跳转到登录页面允许直接通过
     next()

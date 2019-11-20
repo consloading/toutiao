@@ -32,6 +32,8 @@
           </el-submenu>
           <!-- 账户信息 -->
           <el-menu-item index="/home/userinfo">账户信息</el-menu-item>
+          <!-- 测试 -->
+          <el-menu-item index="/demo">测试组件</el-menu-item>
         </el-menu>
       </el-aside>
       <!-- 头部与内容区域的容器 -->
@@ -41,7 +43,8 @@
         <!-- 内容区域 -->
         <el-main>
           <!-- 二级路由容器，子路由会渲染到这里 -->
-         <router-view>
+           <!-- :key="$route.path" 解决编辑与发布访问同一个组件，会出现复用问题，禁用路由缓存解决复用问题 -->
+         <router-view :key="$route.path">
          </router-view>
         </el-main>
       </el-container>
